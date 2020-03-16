@@ -1,11 +1,9 @@
-package cn.edu.bistu.cs.ir;
+package cn.edu.bistu.cs.ir.pps;
 
 import cn.edu.bistu.cs.ir.data.News;
 import org.apache.log4j.Logger;
 import us.codecraft.webmagic.Page;
 import us.codecraft.webmagic.Site;
-import us.codecraft.webmagic.Spider;
-import us.codecraft.webmagic.pipeline.JsonFilePipeline;
 import us.codecraft.webmagic.processor.PageProcessor;
 import us.codecraft.webmagic.selector.Selectable;
 
@@ -13,10 +11,10 @@ import java.util.List;
 
 /**
  * 面向腾讯新闻(https://new.qq.com/ch/antip/)的网络爬虫示例
+ * @author ruoyuchen
  */
-public class TencentNewsCrawler implements PageProcessor {
-
-    private static final Logger log = Logger.getLogger(TencentNewsCrawler.class);
+public class TencentNews implements PageProcessor {
+    private static final Logger log = Logger.getLogger(TencentNews.class);
 
     private Site site = Site.me().setRetryTimes(3).setSleepTime(2000);
 
@@ -25,6 +23,7 @@ public class TencentNewsCrawler implements PageProcessor {
         String url = page.getRequest().getUrl();
         if(url.contains("https://new.qq.com/ch/antip/")){
             log.info("解析新闻列表");
+            /// //div[@class='main fl']//ul[@class='list']/li/div[@class='detail']/h3/a/@href
             List<Selectable> lis = page.getHtml().xpath("//div[@class='main fl']/div[@id='List']//ul[@class='list']/li").nodes();
             log.info("找到首页新闻["+lis.size()+"]条");
             for(Selectable li: lis){
@@ -33,6 +32,7 @@ public class TencentNewsCrawler implements PageProcessor {
                 String news_title = li.xpath("//div[@class='detail']/h3/a/text()").get();
                 log.info("新闻标题:"+news_title+", 新闻URL:"+news_url);
             }
+            //setSkip方法可以跳过后续的Pipeline的处理
             page.setSkip(true);
         }else if(url.startsWith("https://new.qq.com/omn/")){
             log.info("解析新闻内容");
@@ -62,16 +62,5 @@ public class TencentNewsCrawler implements PageProcessor {
     @Override
     public Site getSite() {
         return this.site;
-    }
-
-    public static void main(String[] args){
-        log.info("爬虫启动...");
-        String startPage = "https://new.qq.com/ch/antip/";
-        TencentNewsCrawler crawler = new TencentNewsCrawler();
-        Spider spider = Spider.create(crawler);
-        spider.addPipeline(new JsonFilePipeline("/Users/ruoyuchen/Downloads/qqnews"));
-        spider.thread(1);
-        spider.addUrl(startPage);
-        spider.run();
     }
 }

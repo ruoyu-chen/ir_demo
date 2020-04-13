@@ -31,7 +31,7 @@ public class JDBooks implements PageProcessor {
         String url = page.getRequest().getUrl();
         if(url.startsWith("https://list.jd.com/")){
             //列表页/目录页
-            //https://list.jd.com/list.html?cat=1713,3287,3797
+            // https://list.jd.com/list.html?cat=1713,3287,3797
             log.info("处理列表页["+url+"]...");
             //目前仅提取当前列表页内部包含的信息页链接，不提取指向其他列表页的链接
             List<String> items = page.getHtml().xpath("//div[@id='plist']/" +

@@ -2,4 +2,6 @@
 /workspace.xml
 /.idea/
 /target/
+/logs/
+/workspace/
 ir_demo.iml

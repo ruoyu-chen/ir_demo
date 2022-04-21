@@ -11,10 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.AbstractMap;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 面向检索服务接口的控制器类
@@ -44,17 +41,18 @@ public class QueryController {
      * @return 检索得到的结果记录，以<页面ID, 页面标题>二元组的形式返回
      */
     @GetMapping(value = "/kw", produces = "application/json;charset=UTF-8")
-    public QueryResponse<List<Map.Entry<String, String>>> queryByKw(@RequestParam(name = "kw") String kw,
+    public QueryResponse<List<Map<String, String>>> queryByKw(@RequestParam(name = "kw") String kw,
                                                                     @RequestParam(name = "pageNo", defaultValue = "1") int pageNo,
                                                                     @RequestParam(name = "pageSize", defaultValue = "10") int pageSize){
         try {
             //TODO 请大家思考如何在queryByKw函数中添加分页参数
             List<Document> docs = idxService.queryByKw(kw);
-            List<Map.Entry<String, String>> results = new ArrayList<>();
+            List<Map<String, String>> results = new ArrayList<>();
             for(Document doc : docs){
-                String id = doc.get("ID");
-                String title = doc.get("TITLE");
-                results.add(new AbstractMap.SimpleEntry<>(id, title));
+                Map<String, String> record = new HashMap<>(2);
+                record.put("ID", doc.get("ID"));
+                record.put("TITLE", doc.get("TITLE"));
+                results.add(record);
             }
             return QueryResponse.genSucc("检索成功", results);
         } catch (Exception e) {

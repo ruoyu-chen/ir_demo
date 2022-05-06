@@ -7,6 +7,8 @@ import us.codecraft.webmagic.Page;
 import us.codecraft.webmagic.Site;
 import us.codecraft.webmagic.processor.PageProcessor;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 /**
@@ -15,7 +17,7 @@ import java.util.List;
  * 的网络爬虫示例
  * @author ruoyuchen
  */
-public class BlogCrawler implements PageProcessor {
+public class SinaBlogCrawler implements PageProcessor {
 
     private static final String URL_PREFIX_LIST = "http://blog.sina.com.cn/s/articlelist_";
 
@@ -30,12 +32,14 @@ public class BlogCrawler implements PageProcessor {
      */
     private final String blogger;
 
-    public BlogCrawler(Site site, String blogger){
+    public SinaBlogCrawler(Site site, String blogger){
         this.site = site;
         this.blogger = blogger;
     }
 
-    private static final Logger log = LoggerFactory.getLogger(BlogCrawler.class);
+    private static final Logger log = LoggerFactory.getLogger(SinaBlogCrawler.class);
+
+    private final SimpleDateFormat sdf = new SimpleDateFormat("(uuuu-MM-dd HH:mm:ss)");
 
     @Override
     public void process(Page page) {
@@ -62,7 +66,13 @@ public class BlogCrawler implements PageProcessor {
             blog.setId(id);
             blog.setTitle(title);
             blog.setContent(content);
-            blog.setDate(time);
+            try {
+                blog.setDate(sdf.parse(time).getTime());
+            } catch (ParseException e) {
+                log.error("无法识别的日期时间格式:[{}]", time);
+                e.printStackTrace();
+                blog.setDate(0);
+            }
             blog.setAuthor(blogger);
             page.putField(RESULT_ITEM_KEY, blog);
         }else{

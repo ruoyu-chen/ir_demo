@@ -26,7 +26,7 @@ public class Blog {
     /**
      * 日期
      */
-    private String date;
+    private long date;
 
     /**
      * 正文内容
@@ -37,11 +37,6 @@ public class Blog {
      * 作者
      */
     private String author;
-
-    /**
-     * 分类
-     */
-    private List<String> cats;
 
     /**
      * 标签

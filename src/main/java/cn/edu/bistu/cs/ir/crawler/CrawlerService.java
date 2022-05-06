@@ -39,9 +39,10 @@ public class CrawlerService {
 
     /**
      * 启动面向新浪博客的爬虫
+     * [注(20220506)]目前新浪博客处于封闭维护状态，当前爬虫暂不可用
      * @param blogger 待爬取的博主ID
      */
-    public void startBlogCrawler(String blogger) {
+    public void startSinaBlogCrawler(String blogger) {
         if(StringUtil.isEmpty(blogger)){
             log.error("博主的唯一ID不可以为空");
             return;
@@ -59,7 +60,7 @@ public class CrawlerService {
                 .setRetryTimes(config.getRetryTimes())
                 .setSleepTime(config.getSleepTime())
                 .setUserAgent(config.getAgent());
-        this.spider = Spider.create(new BlogCrawler(site, blogger));
+        this.spider = Spider.create(new SinaBlogCrawler(site, blogger));
         spider.addPipeline(new LucenePipeline(idxService));
         spider.addPipeline(new JsonFilePipeline(config.getCrawler()));
         spider.thread(1);
@@ -68,11 +69,42 @@ public class CrawlerService {
         log.info("启动面向新浪博客的爬虫，抓取博主ID为[{}]的作者的文章", blogger);
     }
 
+    /**
+     * 启动面向博客园的爬虫
+     * @param blogger 待爬取的博主ID
+     */
+    public void startCnBlogCrawler(String blogger) {
+        if(StringUtil.isEmpty(blogger)){
+            log.error("博主的唯一ID不可以为空");
+            return;
+        }
+        String startPage = String.format("https://www.cnblogs.com/%s/default.html?page=1", blogger);
+        if(this.spider != null){
+            if(!Stopped.equals(this.spider.getStatus())){
+                //如果spider成员不为空，并且状态不是 Stopped，则不可以启动新的爬虫
+                log.error("当前有正在运行的爬虫对象，不可以创建新的爬虫");
+                return;
+            }
+        }
+        Site site = Site
+                .me()
+                .setRetryTimes(config.getRetryTimes())
+                .setSleepTime(config.getSleepTime())
+                .setUserAgent(config.getAgent());
+        this.spider = Spider.create(new CnBlogsCrawler(site, blogger));
+        spider.addPipeline(new LucenePipeline(idxService));
+        spider.addPipeline(new JsonFilePipeline(config.getCrawler()));
+        spider.thread(1);
+        spider.addUrl(startPage);
+        spider.runAsync();
+        log.info("启动面向博客园的爬虫，抓取博主ID为[{}]的作者的文章", blogger);
+    }
+
     @PostConstruct
     public void init(){
         if(config.isStartCrawler()){
             log.info("系统配置信息中[startCrawler]配置项为true，启动爬虫的运行");
-            startBlogCrawler(config.getBloggerId());
+            startCnBlogCrawler("tencent-cloud-native");
         }
     }
 }

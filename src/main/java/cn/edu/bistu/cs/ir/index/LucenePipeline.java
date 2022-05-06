@@ -1,11 +1,8 @@
 package cn.edu.bistu.cs.ir.index;
 
-import cn.edu.bistu.cs.ir.crawler.BlogCrawler;
+import cn.edu.bistu.cs.ir.crawler.SinaBlogCrawler;
 import cn.edu.bistu.cs.ir.model.Blog;
-import org.apache.lucene.document.Document;
-import org.apache.lucene.document.Field;
-import org.apache.lucene.document.StringField;
-import org.apache.lucene.document.TextField;
+import org.apache.lucene.document.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import us.codecraft.webmagic.ResultItems;
@@ -29,7 +26,7 @@ public class LucenePipeline implements Pipeline {
 
     @Override
     public void process(ResultItems resultItems, Task task) {
-        Blog blog = resultItems.get(BlogCrawler.RESULT_ITEM_KEY);
+        Blog blog = resultItems.get(SinaBlogCrawler.RESULT_ITEM_KEY);
         if(blog==null){
             log.error("无法从爬取的结果中提取到Blog对象");
             return;
@@ -50,8 +47,7 @@ public class LucenePipeline implements Pipeline {
         document.add(new TextField("TITLE", blog.getTitle(), Field.Store.YES));
         //页面内容全文
         document.add(new TextField("CONTENT", blog.getContent(), Field.Store.YES));
-        //TODO 下面请同学们补充其他的待检索字段
-
+        //TODO 下面请同学们补充其他的待检索字段，如发布时间、标签、作者等，并思考应该选择什么字段类型
         return document;
     }
 }

@@ -1,8 +1,8 @@
 # Default ignored files
 /workspace.xml
-/.idea/
-/target/
-/logs/
-/workspace/
-/es_docker/
+.idea/
+target/
+logs/
+workspace/
+es_docker/
 ir_demo.iml

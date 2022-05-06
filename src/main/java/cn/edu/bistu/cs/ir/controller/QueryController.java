@@ -15,6 +15,7 @@ import java.util.*;
 
 /**
  * 面向检索服务接口的控制器类
+ * Restful Web Services/Rest风格的Web服务
  * @author chenruoyu
  */
 @RestController
@@ -52,6 +53,7 @@ public class QueryController {
                 Map<String, String> record = new HashMap<>(2);
                 record.put("ID", doc.get("ID"));
                 record.put("TITLE", doc.get("TITLE"));
+                record.put("TIME", doc.get("TIME_STORE"));
                 results.add(record);
             }
             return QueryResponse.genSucc("检索成功", results);

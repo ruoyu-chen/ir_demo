@@ -10,10 +10,7 @@ import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.queryparser.classic.QueryParser;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.ScoreDoc;
-import org.apache.lucene.search.TopDocs;
+import org.apache.lucene.search.*;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 import org.slf4j.Logger;
@@ -97,6 +94,10 @@ public class IdxService implements DisposableBean {
         }
         return results;
     }
+
+    //TODO 请大家在这里添加更多的检索函数，如针对发表时间的范围检索等，
+    // 添加了检索函数后，还需要相应地在Controller中添加接口
+
 
     @Override
     public void destroy(){

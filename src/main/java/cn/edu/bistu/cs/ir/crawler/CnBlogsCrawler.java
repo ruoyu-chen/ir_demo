@@ -54,10 +54,11 @@ public class CnBlogsCrawler implements PageProcessor {
 
     @Override
     public void process(Page page) {
+        //url里存储的是请求页面的URL地址
         String url = page.getRequest().getUrl();
         if(url.startsWith(list_prefix)){
             log.info("解析博客目录页[{}]", url);
-            List<String> blogs = page.getHtml().xpath("//div[@id='home']//div[@class='forFlow']//div[@class='postTitle']/a/@href").all();
+            List<String> blogs = page.getHtml().xpath("//div[@class='forFlow']//div[@class='postTitle']/a/@href").all();
             log.info("获取博文内容页地址[{}]条", blogs.size());
             page.addTargetRequests(blogs);
             //TODO 请大家思考如何添加其他博客目录页的地址?需要解析博客目录页最底部的导航栏
@@ -67,15 +68,15 @@ public class CnBlogsCrawler implements PageProcessor {
             log.info("解析博客内容页[{}]", url);
             //博文的ID，设置为页面URL删去前缀和 .html后缀后的字符串
             String id = url.replace(blog_prefix, "").replace(".html", "");
-            String title = page.getHtml().xpath("//div[@class='forFlow']//div[@class='post']/h1[@class='postTitle']/a/span/text()").get();
-            String time = page.getHtml().xpath("//div[@class='forFlow']//div[@class='post']/div[@class='postDesc']/span[@id='post-date']/text()").get();
-            String content = page.getHtml().xpath("//div[@class='forFlow']//div[@class='post']//div[@id='cnblogs_post_body']/tidyText()").get();
-            String blogger = page.getHtml().xpath("//div[@id='blogTitle']/div[@class='title']/a/text()").get();
+            String title = page.getHtml().xpath("//div[@class='post']/h1[@class='postTitle']//span/text()").get();
+            String time = page.getHtml().xpath("//div[@class='postDesc']/span[@id='post-date']/text()").get();
+            String content = page.getHtml().xpath("//div[@class='post']//div[@id='cnblogs_post_body']/allText()").get();
             //TODO 请大家思考如何抓取页面中的标签、阅读数、评论数等数据?
             Blog blog = new Blog();
             blog.setId(id);
             blog.setTitle(title);
             blog.setContent(content);
+            blog.setAuthor(bloggerId);
             try {
                 blog.setDate(sdf.parse(time).getTime());
             } catch (ParseException e) {
@@ -83,7 +84,6 @@ public class CnBlogsCrawler implements PageProcessor {
                 e.printStackTrace();
                 blog.setDate(0);
             }
-            blog.setAuthor(blogger);
             page.putField(RESULT_ITEM_KEY, blog);
         }else{
             log.warn("暂不支持的URL地址:[{}]", url);

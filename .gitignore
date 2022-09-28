@@ -6,3 +6,4 @@ logs/
 workspace/
 es_docker/
 ir_demo.iml
+/es_docker/

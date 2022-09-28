@@ -17,6 +17,7 @@
         <java.version>11</java.version>
         <lucene.version>8.11.1</lucene.version>
         <webmagic.version>0.7.5</webmagic.version>
+        <es.version>8.2.0</es.version>
     </properties>
     <dependencies>
         <dependency>

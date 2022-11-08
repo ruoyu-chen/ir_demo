@@ -1,6 +1,10 @@
 package cn.edu.bistu.cs.ir.crawler;
 
 import cn.edu.bistu.cs.ir.model.Blog;
+import cn.edu.bistu.cs.ir.model.BlogStats;
+import cn.edu.bistu.cs.ir.utils.HttpUtils;
+import cn.edu.bistu.cs.ir.utils.StringUtil;
+import com.alibaba.fastjson.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import us.codecraft.webmagic.Page;
@@ -77,6 +81,18 @@ public class CnBlogsCrawler implements PageProcessor {
             blog.setTitle(title);
             blog.setContent(content);
             blog.setAuthor(bloggerId);
+            HttpUtils httpUtils = new HttpUtils();
+            String json = httpUtils.postJson(
+                    String.format("https://www.cnblogs.com/%s/ajax/GetPostStat", bloggerId),
+                    String.format("[%s]", id),
+                    null);
+            if(!StringUtil.isEmpty(json)){
+                List<BlogStats> blogStats = JSONObject.parseArray(json, BlogStats.class);
+                if(blogStats!=null&&blogStats.size()>0){
+                    log.info("成功获取博文[{}]的阅读数等信息:[{}]", id, json);
+                    blog.setBlogStats(blogStats.get(0));
+                }
+            }
             try {
                 blog.setDate(sdf.parse(time).getTime());
             } catch (ParseException e) {

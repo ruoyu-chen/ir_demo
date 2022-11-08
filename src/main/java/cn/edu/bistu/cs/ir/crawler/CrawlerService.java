@@ -21,7 +21,7 @@ import static us.codecraft.webmagic.Spider.Status.Stopped;
  * @author chenruoyu
  */
 @Component
-public class CrawlerService {
+public class CrawlerService{
 
     private static final Logger log = LoggerFactory.getLogger(CrawlerService.class);
 

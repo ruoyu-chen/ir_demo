@@ -54,13 +54,13 @@ public class Config {
     /**
      * 网络爬虫：两次爬取之间的休眠间隔，以毫秒为单位，默认为5000，即5秒
      */
-    private int sleepTime = 5000;
+    private int sleepTime = 2000;
 
     /**
      * 是否在系统初始化完成后，启动爬虫的执行，
      * 默认为true
      */
-    private boolean startCrawler = true;
+    private boolean startCrawler = false;
 
     @PostConstruct
     public void init(){

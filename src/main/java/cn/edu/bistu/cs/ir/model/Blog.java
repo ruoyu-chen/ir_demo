@@ -42,4 +42,10 @@ public class Blog {
      * 标签
      */
     private List<String> tags;
+
+    /**
+     * 动态获取的博文信息
+     */
+    private BlogStats blogStats;
+
 }
